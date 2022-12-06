@@ -1,0 +1,50 @@
+version: '3.4'
+
+services:
+  sotiyoalerts:
+    image: ${DOCKER_REGISTRY-}sotiyoalerts
+    build:
+      context: .
+      dockerfile: SotiyoAlerts/Dockerfile
+    depends_on:
+      - sotiyoalertsdb
+    networks:
+      - elastic
+  sotiyoalertsdb:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${SA_PASSWORD}
+    networks:
+      - elastic
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.9.2
+    ports:
+      - 1031:9200
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    environment:
+      - xpack.monitoring.enabled=true
+      - xpack.watcher.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node
+    networks:
+      - elastic
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:7.9.2
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    networks:
+      - elastic
+networks:
+  elastic:
+    driver: bridge
+
+volumes:
+  elasticsearch-data:

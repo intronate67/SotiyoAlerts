@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "SotiyoAlerts": {
+      "commandName": "Project",
+      "commandLineArgs": "--environment \"Development\""
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
