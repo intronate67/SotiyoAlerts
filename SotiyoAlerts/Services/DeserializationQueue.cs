@@ -21,7 +21,6 @@ namespace SotiyoAlerts.Services
             };
 
             _jobs = new ActionBlock<RawSocketResponse>(ProcessQueuedItem, executionDataFlowBlockOptions);
-
             _messageQueue = messageQueue;
         }
 

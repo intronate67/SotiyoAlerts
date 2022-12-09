@@ -5,6 +5,14 @@ namespace SotiyoAlerts.Util
 {
     public static class ComponentUtil
     {
+        public static MessageComponent GetNewTrackingComponent()
+        {
+            return new ComponentBuilder()
+                        .WithButton("Yes", "add-select-yes", style: ButtonStyle.Success, row: 0)
+                        .WithButton("No", "add-select-no", style: ButtonStyle.Danger, row: 0)
+                        .Build();
+        }
+
         public static MessageComponent GetFilterComponent()
         {
             var menu = new SelectMenuBuilder()

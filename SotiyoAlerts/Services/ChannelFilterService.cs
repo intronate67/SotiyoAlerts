@@ -31,7 +31,7 @@ namespace SotiyoAlerts.Services
         {
             return (from cf in _ctx.ChannelFilters
                     join c in _ctx.Channels on cf.ChannelId equals c.Id
-                    where c.GuildId == guildId
+                    where c.GuildId == guildId && !cf.IsDeleted
                     select cf)?.ToHashSet();
         }
 

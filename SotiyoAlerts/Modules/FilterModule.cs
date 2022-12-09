@@ -25,10 +25,7 @@ namespace SotiyoAlerts.Modules
             {
                 if (_channelFilterService.GetFiltersForChannelId(Convert.ToInt64(Context.Channel.Id)).Any())
                 {
-                    MessageComponent component = new ComponentBuilder()
-                        .WithButton("Yes", "add-select-yes", style: ButtonStyle.Success, row: 0)
-                        .WithButton("No", "add-select-no", style: ButtonStyle.Danger, row: 0)
-                        .Build();
+                    MessageComponent component = ComponentUtil.GetNewTrackingComponent();
 
                     await Context.Interaction.RespondAsync(
                         "There are already filters applied in this channel, are you sure you want to add more?",
@@ -110,13 +107,13 @@ namespace SotiyoAlerts.Modules
 
             if (filters == null || filters?.Count == 0)
             {
-                await Context.Interaction.RespondAsync("No filters were found for the current channel.");
+                await Context.Interaction.RespondAsync("No filters were found for the current channel.", ephemeral: true);
                 return;
             }
 
             if (filters.All(cf => !cf.IsActive))
             {
-                await Context.Interaction.RespondAsync("There are no existing filters to disable.");
+                await Context.Interaction.RespondAsync("There are no existing filters to disable.", ephemeral: true);
                 return;
             }
 
@@ -140,7 +137,7 @@ namespace SotiyoAlerts.Modules
 
                 var components = new ComponentBuilder().WithSelectMenu(selectMenu);
 
-                await Context.Interaction.RespondAsync(components: components.Build());
+                await Context.Interaction.RespondAsync(components: components.Build(), ephemeral: true);
                 return;
             }
 
@@ -148,7 +145,7 @@ namespace SotiyoAlerts.Modules
             try
             {
                 _channelFilterService.DisableChannelFilter(filterToDisable);
-                await Context.Interaction.RespondAsync("Successfully enabled the filter!");
+                await Context.Interaction.RespondAsync("Successfully enabled the filter!", ephemeral: true);
             }
             catch (Exception ex)
             {
@@ -223,7 +220,7 @@ namespace SotiyoAlerts.Modules
                         .WithIsInline(true));
                 var filterEmbed = new EmbedBuilder()
                     .WithTitle($"{Context.Channel.Name} Channel Info")
-                    .WithAuthor(Context.Client.CurrentUser)
+                    .WithAuthor(Context.User)
                     .WithDescription("List of all killmail filters that have ever been created for this channel")
                     .WithFields(filterFields)
                     .WithCurrentTimestamp()
@@ -248,7 +245,7 @@ namespace SotiyoAlerts.Modules
                         .WithIsInline(true));
                 var filterEmbed = new EmbedBuilder()
                     .WithTitle($"{channel.Name} Channel Info")
-                    .WithAuthor(Context.Client.CurrentUser)
+                    .WithAuthor(Context.User)
                     .WithDescription("List of all killmail filters that have ever been created for the specified channel")
                     .WithFields(filterFields)
                     .WithCurrentTimestamp()
@@ -276,7 +273,7 @@ namespace SotiyoAlerts.Modules
                     .WithIsInline(true));
             var filterEmbed = new EmbedBuilder()
                 .WithTitle("Sotiyo Alerts Guild Info")
-                .WithAuthor(Context.Client.CurrentUser)
+                .WithAuthor(Context.User)
                 .WithDescription("List of all killmail filters that have ever been created for this guild")
                 .WithFields(filterFields)
                 .WithCurrentTimestamp()
